@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My 60-Day Daily Schedule</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f7f6f3;min-height:100vh;padding:2rem 1rem;}
+  .page{max-width:720px;margin:0 auto;background:#fff;border-radius:12px;padding:2.5rem 2rem 3rem;box-shadow:0 1px 4px rgba(0,0,0,0.08);}
+  .page-icon{font-size:40px;margin-bottom:12px;}
+  .page-title{font-size:28px;font-weight:700;color:#1a1a1a;margin-bottom:4px;}
+  .page-sub{font-size:13px;color:#9b9a97;margin-bottom:2rem;}
+  .progress-wrap{margin-bottom:1.5rem;}
+  .progress-label{display:flex;justify-content:space-between;font-size:12px;color:#6b6b6b;margin-bottom:6px;}
+  .prog-bar{height:6px;background:#e9e9e7;border-radius:3px;overflow:hidden;}
+  .prog-fill{height:100%;background:#2eaadc;border-radius:3px;transition:width 0.3s;}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:2rem;}
+  .sc{background:#f7f6f3;border-radius:8px;padding:12px 14px;}
+  .sc-l{font-size:10px;color:#9b9a97;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.05em;}
+  .sc-v{font-size:17px;font-weight:600;color:#1a1a1a;}
+  .section-head{font-size:11px;font-weight:600;color:#9b9a97;letter-spacing:0.08em;text-transform:uppercase;margin:1.5rem 0 8px;padding-bottom:6px;border-bottom:1px solid #e9e9e7;}
+  .row{display:flex;align-items:center;gap:0;border-radius:6px;border:1px solid #e9e9e7;background:#fff;margin-bottom:4px;overflow:hidden;cursor:pointer;transition:background 0.1s,border-color 0.1s;}
+  .row:hover{background:#f7f6f3;border-color:#d3d1c7;}
+  .row.done{opacity:0.4;}
+  .row.done .row-title{text-decoration:line-through;color:#9b9a97;}
+  .row-cb{width:38px;min-width:38px;display:flex;align-items:center;justify-content:center;border-right:1px solid #e9e9e7;}
+  .row-cb-inner{width:16px;height:16px;border-radius:3px;border:1.5px solid #c7c6c3;display:flex;align-items:center;justify-content:center;transition:all 0.15s;background:#fff;}
+  .row.done .row-cb-inner{background:#2eaadc;border-color:#2eaadc;}
+  .row.done .row-cb-inner svg{opacity:1;}
+  .row-cb-inner svg{width:10px;height:10px;stroke:#fff;fill:none;stroke-width:2.5;opacity:0;}
+  .row-dot{width:8px;height:8px;border-radius:50%;min-width:8px;margin:0 10px;}
+  .row-main{flex:1;padding:10px 8px 10px 0;}
+  .row-title{font-size:13px;font-weight:500;color:#1a1a1a;margin-bottom:2px;}
+  .row-time{font-size:11px;color:#9b9a97;}
+  .row-tag{font-size:10px;padding:2px 8px;border-radius:999px;margin-right:10px;white-space:nowrap;font-weight:500;}
+  .row-end{display:flex;align-items:center;}
+  .notion-box{background:#f7f6f3;border-radius:8px;padding:1.25rem;margin-top:2rem;border:1px solid #e9e9e7;}
+  .notion-label{font-size:11px;color:#9b9a97;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;}
+  .notion-code{font-family:'SF Mono',Monaco,'Courier New',monospace;font-size:11px;color:#6b6b6b;line-height:1.8;white-space:pre-wrap;word-break:break-word;max-height:200px;overflow-y:auto;}
+  .btn-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+  .copy-md-btn{font-size:12px;padding:7px 16px;border-radius:6px;border:1px solid #d3d1c7;background:#fff;color:#1a1a1a;cursor:pointer;font-weight:500;}
+  .copy-md-btn:hover{background:#f7f6f3;}
+  .reset-btn{font-size:12px;padding:7px 16px;border-radius:6px;border:1px solid #d3d1c7;background:#fff;color:#9b9a97;cursor:pointer;}
+  .reset-btn:hover{background:#f7f6f3;}
+  .footer{font-size:11px;color:#c7c6c3;text-align:center;margin-top:2rem;}
+  @media(max-width:500px){
+    .stats{grid-template-columns:repeat(2,1fr);}
+    .page{padding:1.5rem 1rem 2rem;}
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="page-icon">📋</div>
+  <div class="page-title">My 60-day daily schedule</div>
+  <div class="page-sub">5:00 AM — 11:00 PM &nbsp;·&nbsp; Dubai &nbsp;·&nbsp; 2-month sprint</div>
+
+  <div class="progress-wrap">
+    <div class="progress-label"><span id="pLabel">0 of 20 tasks done</span><span id="pPct">0%</span></div>
+    <div class="prog-bar"><div class="prog-fill" id="pFill" style="width:0%"></div></div>
+  </div>
+
+  <div class="stats" id="stats"></div>
+  <div id="taskList"></div>
+
+  <div class="notion-box">
+    <div class="notion-label">Copy to Notion — paste into any Notion page</div>
+    <div class="notion-code" id="notionMd"></div>
+    <div class="btn-row">
+      <button class="copy-md-btn" onclick="copyMd()">📋 Copy Notion template</button>
+      <button class="reset-btn" onclick="resetAll()">↺ Reset all tasks</button>
+    </div>
+  </div>
+
+  <div class="footer">Open this file every morning · Check off as you go · Reset each day</div>
+</div>
+
+<script>
+const TASKS = [
+  {time:"5:00",end:"5:45",title:"Wake up, walk & shower",cat:"body",color:"#1D9E75",bg:"#E1F5EE",tc:"#085041",section:"Morning ritual"},
+  {time:"5:45",end:"6:45",title:"English speaking practice",cat:"language",color:"#534AB7",bg:"#EEEDFE",tc:"#3C3489",section:"Morning ritual"},
+  {time:"6:45",end:"7:30",title:"Breakfast + rest",cat:"rest",color:"#888780",bg:"#F1EFE8",tc:"#444441",section:"Morning ritual"},
+  {time:"7:30",end:"8:30",title:"Cybersecurity skills",cat:"career",color:"#185FA5",bg:"#E6F1FB",tc:"#0C447C",section:"Deep work AM"},
+  {time:"8:30",end:"9:30",title:"Reading book",cat:"mind",color:"#854F0B",bg:"#FAEEDA",tc:"#633806",section:"Deep work AM"},
+  {time:"9:30",end:"10:30",title:"Job applications",cat:"career",color:"#185FA5",bg:"#E6F1FB",tc:"#0C447C",section:"Deep work AM"},
+  {time:"10:30",end:"11:30",title:"Interview speech practice",cat:"career",color:"#185FA5",bg:"#E6F1FB",tc:"#0C447C",section:"Deep work AM"},
+  {time:"11:30",end:"13:00",title:"Lunch + rest",cat:"rest",color:"#888780",bg:"#F1EFE8",tc:"#444441",section:"Midday reset"},
+  {time:"13:00",end:"14:00",title:"YouTube channel planning",cat:"create",color:"#993C1D",bg:"#FAECE7",tc:"#712B13",section:"Afternoon focus"},
+  {time:"14:00",end:"15:00",title:"German basics",cat:"language",color:"#534AB7",bg:"#EEEDFE",tc:"#3C3489",section:"Afternoon focus"},
+  {time:"15:00",end:"15:30",title:"Rest & nap",cat:"rest",color:"#888780",bg:"#F1EFE8",tc:"#444441",section:"Afternoon focus"},
+  {time:"15:30",end:"16:30",title:"Cybersecurity practice",cat:"career",color:"#185FA5",bg:"#E6F1FB",tc:"#0C447C",section:"Afternoon focus"},
+  {time:"16:30",end:"17:30",title:"English writing + reading",cat:"language",color:"#534AB7",bg:"#EEEDFE",tc:"#3C3489",section:"Afternoon focus"},
+  {time:"17:30",end:"18:30",title:"Free time + errands",cat:"rest",color:"#888780",bg:"#F1EFE8",tc:"#444441",section:"Evening wind-down"},
+  {time:"18:30",end:"19:30",title:"Self-motivation + journaling",cat:"mind",color:"#854F0B",bg:"#FAEEDA",tc:"#633806",section:"Evening wind-down"},
+  {time:"19:30",end:"20:30",title:"Dinner + rest",cat:"rest",color:"#888780",bg:"#F1EFE8",tc:"#444441",section:"Evening wind-down"},
+  {time:"20:30",end:"21:30",title:"German or English review",cat:"language",color:"#534AB7",bg:"#EEEDFE",tc:"#3C3489",section:"Evening wind-down"},
+  {time:"21:30",end:"22:30",title:"Evening review + next day plan",cat:"mind",color:"#854F0B",bg:"#FAEEDA",tc:"#633806",section:"Evening wind-down"},
+  {time:"22:30",end:"22:45",title:"Pray + meditation (15 min)",cat:"spirit",color:"#0F6E56",bg:"#E1F5EE",tc:"#085041",section:"Evening wind-down"},
+  {time:"22:45",end:"23:00",title:"Wind down — no screens",cat:"rest",color:"#888780",bg:"#F1EFE8",tc:"#444441",section:"Evening wind-down"},
+];
+
+let done = JSON.parse(localStorage.getItem('schedule_done')||'{}');
+
+function getSections(){
+  const s=[];
+  TASKS.forEach((t,i)=>{if(i===0||t.section!==TASKS[i-1].section)s.push({name:t.section,start:i});});
+  return s;
+}
+
+function render(){
+  const dc=Object.values(done).filter(Boolean).length;
+  const pct=Math.round((dc/TASKS.length)*100);
+  document.getElementById('pLabel').textContent=dc+' of '+TASKS.length+' tasks done';
+  document.getElementById('pPct').textContent=pct+'%';
+  document.getElementById('pFill').style.width=pct+'%';
+
+  document.getElementById('stats').innerHTML=[
+    {l:'Wake up',v:'5:00 AM'},
+    {l:'Sleep',v:'11:00 PM'},
+    {l:'Active tasks',v:TASKS.filter(t=>t.cat!=='rest').length},
+    {l:'Completed',v:dc},
+  ].map(s=>`<div class="sc"><div class="sc-l">${s.l}</div><div class="sc-v">${s.v}</div></div>`).join('');
+
+  const secs=getSections();
+  let html='';
+  secs.forEach(sec=>{
+    html+=`<div class="section-head">${sec.name}</div>`;
+    TASKS.forEach((t,i)=>{
+      const myS=[...secs].reverse().find(s=>s.start<=i);
+      if(!myS||myS.name!==sec.name)return;
+      const isDone=done[i];
+      html+=`<div class="row ${isDone?'done':''}" onclick="tog(${i})">
+        <div class="row-cb"><div class="row-cb-inner"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg></div></div>
+        <div class="row-dot" style="background:${t.color};"></div>
+        <div class="row-main">
+          <div class="row-title">${t.title}</div>
+          <div class="row-time">${t.time} – ${t.end}</div>
+        </div>
+        <div class="row-end">
+          <span class="row-tag" style="background:${t.bg};color:${t.tc};border:1px solid ${t.tc}44">${t.cat}</span>
+        </div>
+      </div>`;
+    });
+  });
+  document.getElementById('taskList').innerHTML=html;
+  buildMd();
+}
+
+function tog(i){
+  done[i]=!done[i];
+  localStorage.setItem('schedule_done',JSON.stringify(done));
+  render();
+}
+
+function resetAll(){
+  if(confirm('Reset all checkboxes for a fresh day?')){
+    done={};
+    localStorage.removeItem('schedule_done');
+    render();
+  }
+}
+
+function buildMd(){
+  const secs=getSections();
+  let md='# My 60-day daily schedule\n';
+  md+='> 5:00 AM – 11:00 PM · Dubai · 2-month sprint\n\n---\n\n';
+  secs.forEach(sec=>{
+    md+='## '+sec.name+'\n\n';
+    TASKS.forEach((t,i)=>{
+      const myS=[...secs].reverse().find(s=>s.start<=i);
+      if(!myS||myS.name!==sec.name)return;
+      md+=`- [ ] **${t.time} – ${t.end}** ${t.title}\n`;
+    });
+    md+='\n';
+  });
+  md+='---\n*Reset each morning. Check off as you go.*';
+  document.getElementById('notionMd').textContent=md;
+}
+
+function copyMd(){
+  const txt=document.getElementById('notionMd').textContent;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const btn=document.querySelector('.copy-md-btn');
+    btn.textContent='✓ Copied!';
+    setTimeout(()=>btn.textContent='📋 Copy Notion template',2000);
+  });
+}
+
+render();
+</script>
+</body>
+</html>
