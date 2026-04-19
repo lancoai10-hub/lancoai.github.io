@@ -42,6 +42,32 @@
   .page-title { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; line-height: 1.2; }
   .page-sub { font-size: 12px; color: var(--text3); margin-top: 5px; line-height: 1.5; }
 
+  /* Calendar Header */
+  .calendar-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+    background: var(--bg3);
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+  .cal-title { font-size: 14px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px;}
+  .date-input {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    cursor: pointer;
+    font-weight: 500;
+    color-scheme: dark; /* native dark mode picker */
+  }
+  .date-input:focus { outline: 2px solid var(--accent); }
+
   .progress-wrap { margin-bottom: 1.25rem; }
   .progress-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); margin-bottom: 7px; }
   .prog-bar { height: 5px; background: var(--bg4); border-radius: 3px; overflow: hidden; }
@@ -74,7 +100,7 @@
     margin-bottom: 4px;
     overflow: hidden;
     cursor: pointer;
-    transition: background 0.12s, border-color 0.12s;
+    transition: all 0.2s;
     -webkit-tap-highlight-color: transparent;
     min-height: 54px;
   }
@@ -82,6 +108,18 @@
   .row:active { opacity: 0.75; }
   .row.done { opacity: 0.32; }
   .row.done .row-title { text-decoration: line-through; color: var(--text3); }
+  
+  /* Active Time Highlight */
+  .row.active {
+    border-color: var(--accent);
+    box-shadow: 0 0 10px rgba(46, 134, 222, 0.2);
+    background: var(--bg4);
+  }
+  .row.active .row-time {
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .row.active .row-title { color: #fff; }
 
   .row-cb {
     width: 46px; min-width: 46px;
@@ -135,12 +173,10 @@
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
 
-  /* Tablet */
   @media (max-width: 600px) {
     .stats { grid-template-columns: repeat(2, 1fr); }
   }
 
-  /* iPhone 14 Pro Max = 430px, and smaller phones */
   @media (max-width: 480px) {
     body { padding: 0 0 5rem; }
     .page {
@@ -150,6 +186,7 @@
       padding: 1.25rem 0.9rem 2rem;
       min-height: 100vh;
     }
+    .calendar-wrap { padding: 12px; flex-direction: column; gap: 10px; align-items: stretch; }
     .page-title { font-size: 19px; }
     .page-sub { font-size: 11px; }
     .stats { grid-template-columns: repeat(2, 1fr); gap: 6px; margin-bottom: 1.25rem; }
@@ -178,6 +215,11 @@
     <div class="page-sub">5:00 AM — 11:00 PM &nbsp;·&nbsp; Dubai &nbsp;·&nbsp; 2-month sprint</div>
   </div>
 
+  <div class="calendar-wrap">
+    <div class="cal-title">🗓️ Schedule for Date:</div>
+    <input type="date" id="dateInput" class="date-input">
+  </div>
+
   <div class="progress-wrap">
     <div class="progress-label">
       <span id="pLabel">0 of 20 tasks done</span>
@@ -190,10 +232,10 @@
   <div id="taskList"></div>
 
   <div class="bottom-bar">
-    <button class="reset-btn" onclick="resetAll()">↺ &nbsp; Reset all tasks</button>
+    <button class="reset-btn" onclick="resetAll()">↺ &nbsp; Reset tasks for this date</button>
   </div>
 
-  <div class="footer">Open every morning &nbsp;·&nbsp; Check off as you go<br>Your 60-day sprint — every morning counts</div>
+  <div class="footer">Pick any date from the calendar to view your history<br>Tasks highlight automatically based on your current time!</div>
 </div>
 
 <script>
@@ -220,7 +262,40 @@ const TASKS = [
   {time:"22:45",end:"23:00",title:"Wind down — no screens",cat:"rest",dot:"#3d5878",bg:"rgba(77,106,138,0.12)",tc:"#7a99be",section:"Evening wind-down"},
 ];
 
-let done = JSON.parse(localStorage.getItem('sched_v3')||'{}');
+let currentDateStr = '';
+// Let's migrate their existing data (from sched_v3) if they upgrade!
+let history = JSON.parse(localStorage.getItem('cal_history_v1') || '{}');
+
+function getLocalISODate() {
+  const d = new Date();
+  const offset = d.getTimezoneOffset() * 60000;
+  return new Date(d.getTime() - offset).toISOString().split('T')[0];
+}
+
+function initDate() {
+  const today = getLocalISODate();
+  
+  // If we have old data but no history for today, migrate it
+  const oldDataStr = localStorage.getItem('sched_v3');
+  if (oldDataStr && !history[today]) {
+      history[today] = JSON.parse(oldDataStr);
+      localStorage.setItem('cal_history_v1', JSON.stringify(history));
+  }
+  
+  const dateInput = document.getElementById('dateInput');
+  dateInput.value = today;
+  currentDateStr = today;
+
+  dateInput.addEventListener('change', (e) => {
+    currentDateStr = e.target.value;
+    render();
+  });
+
+  render();
+
+  // Check every minute to update active highlighting
+  setInterval(highlightActiveTask, 60000);
+}
 
 function getSections(){
   const s=[];
@@ -229,6 +304,7 @@ function getSections(){
 }
 
 function render(){
+  let done = history[currentDateStr] || {};
   const dc=Object.values(done).filter(Boolean).length;
   const pct=Math.round((dc/TASKS.length)*100);
   document.getElementById('pLabel').textContent=dc+' of '+TASKS.length+' tasks done';
@@ -239,7 +315,7 @@ function render(){
     {l:'Wake up',v:'5:00 AM'},
     {l:'Sleep',v:'11:00 PM'},
     {l:'Active',v:TASKS.filter(t=>t.cat!=='rest').length+' tasks'},
-    {l:'Done today',v:dc},
+    {l:'Done',v:dc},
   ].map(s=>`<div class="sc"><div class="sc-l">${s.l}</div><div class="sc-v">${s.v}</div></div>`).join('');
 
   const secs=getSections();
@@ -250,7 +326,7 @@ function render(){
       const myS=[...secs].reverse().find(s=>s.start<=i);
       if(!myS||myS.name!==sec.name)return;
       const isDone=done[i];
-      html+=`<div class="row${isDone?' done':''}" onclick="tog(${i})">
+      html+=`<div class="row${isDone?' done':''}" id="row-${i}" onclick="tog(${i})">
         <div class="row-cb"><div class="row-cb-inner"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg></div></div>
         <div class="row-dot" style="background:${t.dot}"></div>
         <div class="row-main">
@@ -264,23 +340,56 @@ function render(){
     });
   });
   document.getElementById('taskList').innerHTML=html;
+  
+  // Highlight active immediately after render
+  highlightActiveTask();
+}
+
+function highlightActiveTask() {
+  const isToday = (currentDateStr === getLocalISODate());
+  const now = new Date();
+  const currentMins = now.getHours() * 60 + now.getMinutes();
+
+  TASKS.forEach((t, i) => {
+    const rowEl = document.getElementById('row-'+i);
+    if (!rowEl) return;
+    
+    // reset
+    rowEl.classList.remove('active');
+
+    // Only highlight if viewing today
+    if (isToday) {
+      const [startH, startM] = t.time.split(':').map(Number);
+      const [endH, endM] = t.end.split(':').map(Number);
+      let startMinsTotal = startH * 60 + startM;
+      let endMinsTotal = endH * 60 + endM;
+      if (endMinsTotal < startMinsTotal) endMinsTotal += 24 * 60; // spans midnight
+
+      if (currentMins >= startMinsTotal && currentMins < endMinsTotal) {
+        rowEl.classList.add('active');
+      }
+    }
+  });
 }
 
 function tog(i){
+  let done = history[currentDateStr] || {};
   done[i]=!done[i];
-  localStorage.setItem('sched_v3',JSON.stringify(done));
+  history[currentDateStr] = done;
+  localStorage.setItem('cal_history_v1', JSON.stringify(history));
   render();
 }
 
 function resetAll(){
-  if(confirm('Reset all checkboxes for a fresh day?')){
-    done={};
-    localStorage.removeItem('sched_v3');
+  if(confirm('Reset all checkboxes for ' + currentDateStr + '?')){
+    history[currentDateStr] = {};
+    localStorage.setItem('cal_history_v1', JSON.stringify(history));
     render();
   }
 }
 
-render();
+// Boot up
+initDate();
 </script>
 </body>
 </html>
