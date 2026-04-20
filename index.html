@@ -7,11 +7,11 @@
 <style>
   :root {
     --bg:     #080d1a;
-    --bg2:    #0f1729;
-    --bg3:    #162035;
-    --bg4:    #1c2a42;
-    --border: #1e3456;
-    --border2:#2a4870;
+    --bg2:    #0d1526;
+    --bg3:    #131f35;
+    --bg4:    #1a2840;
+    --border: #1c3050;
+    --border2:#253f68;
     --text:   #dce8f5;
     --text2:  #7a99be;
     --text3:  #3d5878;
@@ -19,244 +19,183 @@
     --green:  #1a9e6e;
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: var(--bg);
-    min-height: 100vh;
-    padding: 1.25rem 1rem 4rem;
-    -webkit-text-size-adjust: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg); min-height: 100vh;
+    padding: 2rem 1.25rem 5rem; -webkit-text-size-adjust: 100%;
   }
+  .page { max-width: 720px; margin: 0 auto; }
+  .page-title { font-size: 26px; font-weight: 700; color: var(--text); letter-spacing: -0.4px; line-height: 1.2; margin-bottom: 5px; }
+  .page-sub   { font-size: 13px; color: var(--text3); margin-bottom: 1.75rem; }
 
-  .page {
-    max-width: 680px;
-    margin: 0 auto;
-    background: var(--bg2);
-    border-radius: 18px;
-    padding: 1.75rem 1.25rem 2.5rem;
-    border: 1px solid var(--border);
+  /* top bar */
+  .top-bar {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 14px; padding: 14px 16px; margin-bottom: 1.5rem;
   }
-
-  .header { margin-bottom: 1.5rem; }
-  .page-icon { font-size: 34px; margin-bottom: 10px; display: block; }
-  .page-title { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; line-height: 1.2; }
-  .page-sub { font-size: 12px; color: var(--text3); margin-top: 5px; line-height: 1.5; }
-
-  /* Calendar & Analytics Header */
-  .calendar-wrap {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1.25rem;
-    background: var(--bg3);
-    padding: 14px 16px;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-  }
-  .cal-title { font-size: 14px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px;}
+  .date-group { display: flex; align-items: center; gap: 10px; }
+  .date-icon  { font-size: 18px; }
+  .date-label { font-size: 13px; color: var(--text2); }
   .date-input {
-    background: var(--bg2);
-    border: 1px solid var(--border2);
-    color: var(--text);
-    padding: 8px 12px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-family: inherit;
-    cursor: pointer;
-    font-weight: 500;
-    color-scheme: dark; /* native dark mode picker */
+    background: var(--bg3); border: 1px solid var(--border2);
+    color: var(--text); border-radius: 8px; padding: 6px 10px;
+    font-size: 14px; font-weight: 500; outline: none; cursor: pointer;
   }
-  .date-input:focus { outline: 2px solid var(--accent); }
-  
-  .analytics-btn {
-    background: var(--bg4); border: 1px solid var(--border2);
-    color: var(--text); padding: 9px 14px; border-radius: 8px;
-    font-size: 13px; font-weight: 600; cursor: pointer;
-    transition: all 0.2s;
+  .date-input::-webkit-calendar-picker-indicator { filter: invert(0.55); cursor: pointer; }
+  .insights-btn {
+    display: flex; align-items: center; gap: 7px;
+    background: var(--bg3); border: 1px solid var(--border2);
+    color: var(--text); border-radius: 10px; padding: 8px 14px;
+    font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap;
+    transition: background 0.12s; -webkit-tap-highlight-color: transparent;
   }
-  .analytics-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); box-shadow: 0 0 10px rgba(46,134,222,0.4); }
+  .insights-btn:hover { background: var(--bg4); }
 
-  .progress-wrap { margin-bottom: 1.25rem; }
+  /* insights panel */
+  .insights-panel {
+    display: none; background: var(--bg2);
+    border: 1px solid var(--border); border-radius: 14px;
+    padding: 1.25rem 1.5rem; margin-bottom: 1.5rem;
+  }
+  .insights-panel.show { display: block; }
+  .ins-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 1rem; }
+  .ins-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 1rem; }
+  .ins-card { background: var(--bg3); border-radius: 10px; padding: 12px; border: 1px solid var(--border); }
+  .ins-val  { font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+  .ins-lbl  { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; }
+  .ins-bar-row { margin-bottom: 8px; }
+  .ins-bar-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--text2); margin-bottom: 4px; }
+  .ins-bar { height: 5px; background: var(--bg4); border-radius: 3px; overflow: hidden; }
+  .ins-bar-fill { height: 100%; border-radius: 3px; transition: width 0.4s; }
+
+  /* progress */
+  .progress-wrap { margin-bottom: 1.5rem; }
   .progress-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); margin-bottom: 7px; }
-  .prog-bar { height: 5px; background: var(--bg4); border-radius: 3px; overflow: hidden; }
-  .prog-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.35s ease; }
+  .prog-bar { height: 4px; background: var(--bg4); border-radius: 2px; overflow: hidden; }
+  .prog-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.35s; }
 
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 7px;
-    margin-bottom: 1.5rem;
-  }
-  .sc { background: var(--bg3); border-radius: 10px; padding: 10px; border: 1px solid var(--border); }
-  .sc-l { font-size: 9px; color: var(--text3); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
-  .sc-v { font-size: 15px; font-weight: 600; color: var(--text); }
+  /* stats */
+  .stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 2rem; }
+  .sc { background: var(--bg2); border-radius: 12px; padding: 13px 14px; border: 1px solid var(--border); }
+  .sc-l { font-size: 9px; color: var(--text3); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.07em; font-weight: 600; }
+  .sc-v { font-size: 20px; font-weight: 600; color: var(--text); }
 
+  /* section heading */
   .section-head {
-    font-size: 10px; font-weight: 600; color: var(--text3);
+    font-size: 11px; font-weight: 600; color: var(--text3);
     letter-spacing: 0.1em; text-transform: uppercase;
-    margin: 1.25rem 0 7px;
-    padding-bottom: 6px;
+    margin: 1.75rem 0 8px; padding-bottom: 8px;
     border-bottom: 1px solid var(--border);
   }
 
+  /* task row */
   .row {
-    display: flex;
-    align-items: center;
-    border-radius: 9px;
-    border: 1px solid var(--border);
-    background: var(--bg3);
-    margin-bottom: 4px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: all 0.2s;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 11px; margin-bottom: 5px; overflow: hidden;
+    transition: border-color 0.12s, background 0.12s;
     -webkit-tap-highlight-color: transparent;
-    min-height: 54px;
   }
-  .row:hover { background: var(--bg4); border-color: var(--border2); }
-  .row:active { opacity: 0.75; }
-  .row.done { opacity: 0.32; }
+  .row:hover       { border-color: var(--border2); background: var(--bg3); }
+  .row.open        { border-color: var(--border2); background: var(--bg3); }
+  .row.done        { opacity: 0.33; }
   .row.done .row-title { text-decoration: line-through; color: var(--text3); }
-  
-  /* Active Time Highlight */
-  .row.active {
-    border-color: var(--accent);
-    box-shadow: 0 0 10px rgba(46, 134, 222, 0.2);
-    background: var(--bg4);
-  }
-  .row.active .row-time {
-    color: var(--accent);
-    font-weight: 600;
-  }
-  .row.active .row-title { color: #fff; }
 
-  .row-cb {
-    width: 46px; min-width: 46px;
-    display: flex; align-items: center; justify-content: center;
-    border-right: 1px solid var(--border);
-    align-self: stretch;
+  .row-top {
+    display: flex; align-items: center;
+    padding: 12px 14px 12px 12px; gap: 11px;
+    min-height: 56px; cursor: pointer;
   }
+
+  /* checkbox — click separately */
+  .row-cb { flex-shrink: 0; padding: 4px; margin: -4px; }
   .row-cb-inner {
-    width: 18px; height: 18px;
-    border-radius: 4px;
+    width: 20px; height: 20px; border-radius: 5px;
     border: 1.5px solid var(--border2);
     display: flex; align-items: center; justify-content: center;
-    transition: all 0.15s;
-    background: transparent;
+    transition: all 0.15s; background: transparent; pointer-events: none;
   }
   .row.done .row-cb-inner { background: var(--green); border-color: var(--green); }
   .row.done .row-cb-inner svg { opacity: 1; }
-  .row-cb-inner svg { width: 10px; height: 10px; stroke: #fff; fill: none; stroke-width: 2.5; opacity: 0; }
+  .row-cb-inner svg { width: 11px; height: 11px; stroke: #fff; fill: none; stroke-width: 2.5; opacity: 0; }
 
-  .row-dot { width: 7px; height: 7px; border-radius: 50%; min-width: 7px; margin: 0 10px; flex-shrink: 0; }
+  .row-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .row-main { flex: 1; min-width: 0; }
+  .row-title { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.3; margin-bottom: 2px; }
+  .row-time  { font-size: 11px; color: var(--text3); }
+  .row-right { display: flex; align-items: center; gap: 9px; flex-shrink: 0; }
+  .row-tag   { font-size: 11px; padding: 3px 10px; border-radius: 999px; font-weight: 500; white-space: nowrap; border: 1px solid transparent; }
+  .row-arrow { font-size: 10px; color: var(--text3); transition: transform 0.22s; line-height: 1; user-select: none; }
+  .row.open .row-arrow { transform: rotate(180deg); }
 
-  .row-main { flex: 1; padding: 11px 6px 11px 0; min-width: 0; }
-  .row-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 3px; line-height: 1.3; }
-  .row-time { font-size: 11px; color: var(--text3); }
+  /* expandable description */
+  .row-desc {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.28s ease, padding 0.22s ease;
+    padding: 0 14px 0 43px; border-top: 0 solid var(--border);
+    font-size: 13px; color: var(--text2); line-height: 1.7;
+  }
+  .row.open .row-desc {
+    max-height: 300px;
+    padding: 12px 14px 14px 43px;
+    border-top-width: 1px;
+  }
 
-  .row-end { display: flex; align-items: center; padding-right: 10px; flex-shrink: 0; }
-  .row-tag { font-size: 10px; padding: 2px 8px; border-radius: 999px; white-space: nowrap; font-weight: 500; }
-
+  /* reset */
   .bottom-bar { margin-top: 2rem; display: flex; justify-content: center; }
   .reset-btn {
-    font-size: 13px;
-    padding: 13px 28px;
-    border-radius: 12px;
-    border: 1px solid var(--border2);
-    background: var(--bg3);
-    color: var(--text2);
-    cursor: pointer;
-    font-weight: 500;
-    transition: background 0.12s, color 0.12s;
+    font-size: 13px; padding: 13px 0; border-radius: 12px;
+    border: 1px solid var(--border2); background: var(--bg2);
+    color: var(--text2); cursor: pointer; font-weight: 500;
+    width: 100%; max-width: 300px; transition: background 0.12s, color 0.12s;
     -webkit-tap-highlight-color: transparent;
-    width: 100%;
-    max-width: 280px;
-    letter-spacing: 0.02em;
   }
   .reset-btn:hover { background: var(--bg4); color: var(--text); }
-  .reset-btn:active { opacity: 0.7; }
 
-  .footer { font-size: 11px; color: var(--text3); text-align: center; margin-top: 1.25rem; line-height: 1.7; }
+  .footer { font-size: 11px; color: var(--text3); text-align: center; margin-top: 1.25rem; line-height: 1.8; }
 
-  /* Modal Analytics */
-  .modal-overlay {
-    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(8, 13, 26, 0.85); backdrop-filter: blur(4px);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.3s;
-    padding: 1rem;
-  }
-  .modal-overlay.open { opacity: 1; pointer-events: auto; }
-  .modal-content {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: 16px; padding: 24px; width: 100%; max-width: 500px;
-    max-height: 85vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-  }
-  .modal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
-  .modal-title { font-size: 20px; font-weight: 700; color: var(--text); }
-  .modal-sub { font-size: 12px; color: var(--text3); margin-top: 4px; }
-  .close-btn { background: var(--bg4); border: 1px solid var(--border); color: var(--text2); width: 30px; height: 30px; border-radius: 8px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-  .close-btn:hover { background: var(--border2); color: #fff; }
-  
-  .stat-card { background: var(--bg3); border-radius: 12px; padding: 16px; border: 1px solid var(--border); }
-  .stat-card-title { font-size: 10px; text-transform: uppercase; color: var(--text2); letter-spacing: 0.05em; margin-bottom: 8px; font-weight: 600; }
-  .stat-val { font-size: 28px; font-weight: 700; color: var(--text); }
-  
-  .cat-row { display: flex; justify-content: space-between; font-size: 13px; margin: 10px 0 6px; color: var(--text); font-weight: 500; }
-  .cat-bar-wrap { height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden; margin-bottom: 16px; border: 1px solid var(--border); }
-  .cat-bar-fill { height: 100%; background: var(--accent); border-radius: 4px; transition: width 0.5s ease; }
-
-  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar { width: 5px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
 
   @media (max-width: 600px) {
-    .stats { grid-template-columns: repeat(2, 1fr); }
+    .stats { grid-template-columns: repeat(2,1fr); }
+    .ins-grid { grid-template-columns: repeat(2,1fr); }
   }
-
   @media (max-width: 480px) {
     body { padding: 0 0 5rem; }
-    .page {
-      border-radius: 0;
-      border-left: none;
-      border-right: none;
-      padding: 1.25rem 0.9rem 2rem;
-      min-height: 100vh;
-    }
-    .calendar-wrap { padding: 12px; flex-direction: column; gap: 12px; align-items: stretch; }
-    .page-title { font-size: 19px; }
-    .page-sub { font-size: 11px; }
-    .stats { grid-template-columns: repeat(2, 1fr); gap: 6px; margin-bottom: 1.25rem; }
-    .sc { padding: 9px 10px; }
-    .sc-v { font-size: 14px; }
-    .row { min-height: 56px; border-radius: 8px; }
-    .row-cb { width: 48px; min-width: 48px; }
-    .row-title { font-size: 13px; }
-    .row-time { font-size: 10px; }
+    .page-title { font-size: 21px; }
     .row-tag { display: none; }
-    .reset-btn { max-width: 100%; font-size: 14px; padding: 14px; }
-  }
-
-  @media (max-width: 380px) {
-    .page { padding: 1rem 0.75rem 1.75rem; }
-    .page-title { font-size: 17px; }
+    .reset-btn { max-width: 100%; }
   }
 </style>
 </head>
 <body>
-
 <div class="page">
-  <div class="header">
-    <span class="page-icon">🌙</span>
-    <div class="page-title">My 60-day daily schedule</div>
-    <div class="page-sub">5:00 AM — 11:00 PM &nbsp;·&nbsp; Dubai &nbsp;·&nbsp; 2-month sprint</div>
+
+  <div class="page-title">My 60-day daily schedule</div>
+  <div class="page-sub">5:00 AM — 11:00 PM &nbsp;·&nbsp; Dubai &nbsp;·&nbsp; 2-month sprint</div>
+
+  <div class="top-bar">
+    <div class="date-group">
+      <span class="date-icon">📅</span>
+      <span class="date-label">Date:</span>
+      <input type="date" class="date-input" id="dateInput">
+    </div>
+    <button class="insights-btn" onclick="toggleInsights()">
+      <span style="display:flex;gap:3px;align-items:center;">
+        <span style="width:7px;height:7px;border-radius:50%;background:#2e86de;display:inline-block;"></span>
+        <span style="width:7px;height:7px;border-radius:50%;background:#1a9e6e;display:inline-block;"></span>
+        <span style="width:7px;height:7px;border-radius:50%;background:#EF9F27;display:inline-block;"></span>
+      </span>
+      Insights
+    </button>
   </div>
 
-  <div class="calendar-wrap">
-    <div style="display:flex; align-items:center; gap:10px;">
-      <div class="cal-title">🗓️ Date:</div>
-      <input type="date" id="dateInput" class="date-input">
-    </div>
-    <button class="analytics-btn" onclick="openAnalytics()">📊 Insights</button>
+  <div class="insights-panel" id="insightsPanel">
+    <div class="ins-title">Today's breakdown</div>
+    <div class="ins-grid" id="insGrid"></div>
+    <div id="insBars"></div>
   </div>
 
   <div class="progress-wrap">
@@ -271,255 +210,198 @@
   <div id="taskList"></div>
 
   <div class="bottom-bar">
-    <button class="reset-btn" onclick="resetAll()">↺ &nbsp; Reset tasks for this date</button>
+    <button class="reset-btn" onclick="resetAll()">↺ &nbsp; Reset all tasks</button>
   </div>
-
-  <div class="footer">Pick any date from the calendar to view your history<br>Tasks highlight automatically based on your current time!</div>
-</div>
-
-<!-- Analytics Modal -->
-<div class="modal-overlay" id="analyticsModal" onclick="if(event.target===this)closeAnalytics()">
-  <div class="modal-content">
-    <div class="modal-header">
-      <div>
-        <div class="modal-title">Sprint Analytics</div>
-        <div class="modal-sub">Track your 60-day performance</div>
-      </div>
-      <button class="close-btn" onclick="closeAnalytics()">&times;</button>
-    </div>
-    <div id="analyticsBody"></div>
-  </div>
+  <div class="footer">Click any task to read the description &nbsp;·&nbsp; Tap the checkbox to mark done<br>Your 60-day sprint — every morning counts</div>
 </div>
 
 <script>
 const TASKS = [
-  {time:"5:00",end:"5:45",title:"Wake up, walk & shower",cat:"body",dot:"#1D9E75",bg:"rgba(29,158,117,0.15)",tc:"#5DCAA5",section:"Morning ritual"},
-  {time:"5:45",end:"6:45",title:"English speaking practice",cat:"language",dot:"#7F77DD",bg:"rgba(127,119,221,0.15)",tc:"#AFA9EC",section:"Morning ritual"},
-  {time:"6:45",end:"7:30",title:"Breakfast + rest",cat:"rest",dot:"#3d5878",bg:"rgba(77,106,138,0.12)",tc:"#7a99be",section:"Morning ritual"},
-  {time:"7:30",end:"8:30",title:"Cybersecurity skills",cat:"career",dot:"#2e86de",bg:"rgba(46,134,222,0.15)",tc:"#85B7EB",section:"Deep work AM"},
-  {time:"8:30",end:"9:30",title:"Reading book",cat:"mind",dot:"#EF9F27",bg:"rgba(239,159,39,0.15)",tc:"#FAC775",section:"Deep work AM"},
-  {time:"9:30",end:"10:30",title:"Job applications",cat:"career",dot:"#2e86de",bg:"rgba(46,134,222,0.15)",tc:"#85B7EB",section:"Deep work AM"},
-  {time:"10:30",end:"11:30",title:"Interview speech practice",cat:"career",dot:"#2e86de",bg:"rgba(46,134,222,0.15)",tc:"#85B7EB",section:"Deep work AM"},
-  {time:"11:30",end:"13:00",title:"Lunch + rest",cat:"rest",dot:"#3d5878",bg:"rgba(77,106,138,0.12)",tc:"#7a99be",section:"Midday reset"},
-  {time:"13:00",end:"14:00",title:"YouTube channel planning",cat:"create",dot:"#D85A30",bg:"rgba(216,90,48,0.15)",tc:"#F0997B",section:"Afternoon focus"},
-  {time:"14:00",end:"15:00",title:"German basics",cat:"language",dot:"#7F77DD",bg:"rgba(127,119,221,0.15)",tc:"#AFA9EC",section:"Afternoon focus"},
-  {time:"15:00",end:"15:30",title:"Rest & nap",cat:"rest",dot:"#3d5878",bg:"rgba(77,106,138,0.12)",tc:"#7a99be",section:"Afternoon focus"},
-  {time:"15:30",end:"16:30",title:"Cybersecurity practice",cat:"career",dot:"#2e86de",bg:"rgba(46,134,222,0.15)",tc:"#85B7EB",section:"Afternoon focus"},
-  {time:"16:30",end:"17:30",title:"English writing + reading",cat:"language",dot:"#7F77DD",bg:"rgba(127,119,221,0.15)",tc:"#AFA9EC",section:"Afternoon focus"},
-  {time:"17:30",end:"18:30",title:"Free time + errands",cat:"rest",dot:"#3d5878",bg:"rgba(77,106,138,0.12)",tc:"#7a99be",section:"Evening wind-down"},
-  {time:"18:30",end:"19:30",title:"Self-motivation + journaling",cat:"mind",dot:"#EF9F27",bg:"rgba(239,159,39,0.15)",tc:"#FAC775",section:"Evening wind-down"},
-  {time:"19:30",end:"20:30",title:"Dinner + rest",cat:"rest",dot:"#3d5878",bg:"rgba(77,106,138,0.12)",tc:"#7a99be",section:"Evening wind-down"},
-  {time:"20:30",end:"21:30",title:"German or English review",cat:"language",dot:"#7F77DD",bg:"rgba(127,119,221,0.15)",tc:"#AFA9EC",section:"Evening wind-down"},
-  {time:"21:30",end:"22:30",title:"Evening review + next day plan",cat:"mind",dot:"#EF9F27",bg:"rgba(239,159,39,0.15)",tc:"#FAC775",section:"Evening wind-down"},
-  {time:"22:30",end:"22:45",title:"Pray + meditation (15 min)",cat:"spirit",dot:"#1D9E75",bg:"rgba(29,158,117,0.15)",tc:"#5DCAA5",section:"Evening wind-down"},
-  {time:"22:45",end:"23:00",title:"Wind down — no screens",cat:"rest",dot:"#3d5878",bg:"rgba(77,106,138,0.12)",tc:"#7a99be",section:"Evening wind-down"},
+  { time:"5:00",  end:"5:45",  title:"Wake up, walk & shower",
+    desc:"No phone first thing. Drink a full glass of water, splash cold water on your face, 2 min deep breathing. Shoes on, walk 30 min, come back and shower. You are now awake and ahead of 95% of people.",
+    cat:"ritual",   dot:"#1D9E75", bg:"rgba(29,158,117,0.18)",  tc:"#5DCAA5", section:"Morning ritual" },
+  { time:"5:45",  end:"6:45",  title:"English speaking practice",
+    desc:"Shadow a podcast or YouTube video — repeat sentences exactly as you hear them. Record yourself speaking for 3 min on any topic. Watch it back and fix filler words. Use Elsa Speak app for pronunciation.",
+    cat:"language", dot:"#7F77DD", bg:"rgba(127,119,221,0.18)", tc:"#AFA9EC", section:"Morning ritual" },
+  { time:"6:45",  end:"7:30",  title:"Breakfast + rest",
+    desc:"Eat a proper meal — eggs, oats, or fruit. Sit down, eat slowly, no screen. Let your brain shift gears before the deep work. This 45 minutes protects the next 4 hours.",
+    cat:"rest",     dot:"#3d5878", bg:"rgba(77,106,138,0.15)",  tc:"#7a99be", section:"Morning ritual" },
+  { time:"7:30",  end:"8:30",  title:"Cybersecurity skills",
+    desc:"Open TryHackMe or your Google Cybersecurity Certificate. Complete one full room or one full video lesson — no half sessions. Take notes by hand. If stuck, spend 10 min researching before moving on.",
+    cat:"career",   dot:"#2e86de", bg:"rgba(46,134,222,0.18)",  tc:"#85B7EB", section:"Deep work AM" },
+  { time:"8:30",  end:"9:30",  title:"Reading book",
+    desc:"Phone in another room. Read for a full 60 minutes without stopping. Underline one key idea per chapter. Choose books on mindset, cybersecurity, business, or self-discipline. Reading is the slowest fast track.",
+    cat:"mind",     dot:"#EF9F27", bg:"rgba(239,159,39,0.18)",  tc:"#FAC775", section:"Deep work AM" },
+  { time:"9:30",  end:"10:30", title:"Job applications",
+    desc:"Apply to 3–5 roles daily on LinkedIn, Bayt, Indeed, and Glassdoor. Personalise every cover message — copy-paste gets ignored. Track every application in a simple notes list. Volume plus quality wins.",
+    cat:"career",   dot:"#2e86de", bg:"rgba(46,134,222,0.18)",  tc:"#85B7EB", section:"Deep work AM" },
+  { time:"10:30", end:"11:30", title:"Interview speech practice",
+    desc:"Pick one question: 'Tell me about yourself', 'Why cybersecurity?', or 'What is your strength?'. Record a 2-min video answer. Watch it back — fix pace, filler words, and eye contact. Repeat until natural.",
+    cat:"career",   dot:"#2e86de", bg:"rgba(46,134,222,0.18)",  tc:"#85B7EB", section:"Deep work AM" },
+  { time:"11:30", end:"13:00", title:"Lunch + rest",
+    desc:"Cook or buy a good meal. Eat slowly and sit down. If tired, take a 20-min nap — set an alarm. Do not let this stretch past 90 minutes. Rest is what makes the afternoon sessions possible.",
+    cat:"rest",     dot:"#3d5878", bg:"rgba(77,106,138,0.15)",  tc:"#7a99be", section:"Midday reset" },
+  { time:"13:00", end:"14:00", title:"YouTube channel planning",
+    desc:"Decide your niche — cybersecurity tips, learning journey, or Dubai student life. Write a script for one video idea (300 words is enough). Or record a rough test clip on your phone. Starting ugly beats not starting.",
+    cat:"create",   dot:"#D85A30", bg:"rgba(216,90,48,0.18)",   tc:"#F0997B", section:"Afternoon focus" },
+  { time:"14:00", end:"15:00", title:"German basics",
+    desc:"Duolingo streak first — 10 minutes max. Then watch a YouTube German A1 lesson. Learn 10 new words and write them with meaning. Say each word aloud 3 times. Focus on: greetings, numbers, jobs, and daily verbs.",
+    cat:"language", dot:"#7F77DD", bg:"rgba(127,119,221,0.18)", tc:"#AFA9EC", section:"Afternoon focus" },
+  { time:"15:00", end:"15:30", title:"Rest & nap",
+    desc:"30 minutes only — set an alarm before you close your eyes. Lie down and breathe slowly. If sleep does not come, just rest your eyes. This short break resets your brain for the next 3 hours of focused work.",
+    cat:"rest",     dot:"#3d5878", bg:"rgba(77,106,138,0.15)",  tc:"#7a99be", section:"Afternoon focus" },
+  { time:"15:30", end:"16:30", title:"Cybersecurity practice",
+    desc:"Hands-on only — no passive watching. Open TryHackMe CTF challenges, practice Linux commands, or do a Wireshark lab. Go back to your morning notes and test yourself. Knowing and doing are two different things.",
+    cat:"career",   dot:"#2e86de", bg:"rgba(46,134,222,0.18)",  tc:"#85B7EB", section:"Afternoon focus" },
+  { time:"16:30", end:"17:30", title:"English writing + reading",
+    desc:"Write one paragraph in English about your day or an opinion. Then read 2 short articles — BBC, Medium, or a tech blog. Write down 5 new words with their meaning. Small daily deposits build fluency fast.",
+    cat:"language", dot:"#7F77DD", bg:"rgba(127,119,221,0.18)", tc:"#AFA9EC", section:"Afternoon focus" },
+  { time:"17:30", end:"18:30", title:"Free time + errands",
+    desc:"Handle anything practical — grocery, admin, calls home, laundry. Or simply rest and do nothing. This is your buffer hour. Protect your mental energy so the evening sessions stay strong.",
+    cat:"rest",     dot:"#3d5878", bg:"rgba(77,106,138,0.15)",  tc:"#7a99be", section:"Evening wind-down" },
+  { time:"18:30", end:"19:30", title:"Self-motivation + journaling",
+    desc:"Write 3 things you accomplished today — no matter how small. Write 1 thing you are grateful for. Write your #1 goal for tomorrow. Then read one chapter from a self-discipline or mindset book.",
+    cat:"mind",     dot:"#EF9F27", bg:"rgba(239,159,39,0.18)",  tc:"#FAC775", section:"Evening wind-down" },
+  { time:"19:30", end:"20:30", title:"Dinner + rest",
+    desc:"Eat a proper dinner sitting down — no scrolling while eating. After dinner take a slow 10-min walk if possible. Let your body digest and your mind decompress before the final sessions.",
+    cat:"rest",     dot:"#3d5878", bg:"rgba(77,106,138,0.15)",  tc:"#7a99be", section:"Evening wind-down" },
+  { time:"20:30", end:"21:30", title:"German or English review",
+    desc:"Alternate daily. German day: revise word list, Duolingo story, or a 10-min German cartoon. English day: watch YouTube without subtitles first then with, or 30-min voice chat on HelloTalk.",
+    cat:"language", dot:"#7F77DD", bg:"rgba(127,119,221,0.18)", tc:"#AFA9EC", section:"Evening wind-down" },
+  { time:"21:30", end:"22:30", title:"Evening review + next day plan",
+    desc:"Answer 3 questions: What did I complete today? What did I skip and why? What is my #1 priority tomorrow? Write tomorrow's top 3 tasks. Close the day with clarity — not with a phone in your hand.",
+    cat:"mind",     dot:"#EF9F27", bg:"rgba(239,159,39,0.18)",  tc:"#FAC775", section:"Evening wind-down" },
+  { time:"22:30", end:"22:45", title:"Pray + meditation (15 min)",
+    desc:"15 minutes of stillness. Pray, reflect, or sit in silence with slow breathing. No phone, no music. This is the moment you hand the day over and reset your mind. The most underrated tool for discipline.",
+    cat:"spirit",   dot:"#1D9E75", bg:"rgba(29,158,117,0.18)",  tc:"#5DCAA5", section:"Evening wind-down" },
+  { time:"22:45", end:"23:00", title:"Wind down — no screens",
+    desc:"Lights dim. Phone face-down or in another room. Set your 5 AM alarm now. Lay out tomorrow's clothes. Do a light stretch or lie still. Sleep is where discipline regenerates — guard it.",
+    cat:"rest",     dot:"#3d5878", bg:"rgba(77,106,138,0.15)",  tc:"#7a99be", section:"Evening wind-down" },
 ];
 
-let currentDateStr = '';
-let history = JSON.parse(localStorage.getItem('cal_history_v1') || '{}');
+const STORE = 'sched_v6';
+let done = JSON.parse(localStorage.getItem(STORE)||'{}');
+let openRows = {};
+let insightsOn = false;
 
-function getLocalISODate() {
-  const d = new Date();
-  const offset = d.getTimezoneOffset() * 60000;
-  return new Date(d.getTime() - offset).toISOString().split('T')[0];
-}
-
-function initDate() {
-  const today = getLocalISODate();
-  
-  const oldDataStr = localStorage.getItem('sched_v3');
-  if (oldDataStr && !history[today]) {
-      history[today] = JSON.parse(oldDataStr);
-      localStorage.setItem('cal_history_v1', JSON.stringify(history));
-  }
-  
-  const dateInput = document.getElementById('dateInput');
-  dateInput.value = today;
-  currentDateStr = today;
-
-  dateInput.addEventListener('change', (e) => {
-    currentDateStr = e.target.value;
-    render();
-  });
-
-  render();
-  setInterval(highlightActiveTask, 60000);
-}
+document.getElementById('dateInput').value = new Date().toISOString().slice(0,10);
 
 function getSections(){
   const s=[];
-  TASKS.forEach((t,i)=>{if(i===0||t.section!==TASKS[i-1].section)s.push({name:t.section,start:i});});
+  TASKS.forEach((t,i)=>{ if(i===0||t.section!==TASKS[i-1].section) s.push({name:t.section,start:i}); });
   return s;
 }
 
 function render(){
-  let done = history[currentDateStr] || {};
-  const dc=Object.values(done).filter(Boolean).length;
-  const pct=Math.round((dc/TASKS.length)*100);
-  document.getElementById('pLabel').textContent=dc+' of '+TASKS.length+' tasks done';
-  document.getElementById('pPct').textContent=pct+'%';
-  document.getElementById('pFill').style.width=pct+'%';
+  const dc = Object.values(done).filter(Boolean).length;
+  const pct = Math.round((dc/TASKS.length)*100);
+  document.getElementById('pLabel').textContent = dc+' of '+TASKS.length+' tasks done';
+  document.getElementById('pPct').textContent   = pct+'%';
+  document.getElementById('pFill').style.width  = pct+'%';
 
-  document.getElementById('stats').innerHTML=[
-    {l:'Wake up',v:'5:00 AM'},
-    {l:'Sleep',v:'11:00 PM'},
-    {l:'Active',v:TASKS.filter(t=>t.cat!=='rest').length+' tasks'},
-    {l:'Done',v:dc},
+  document.getElementById('stats').innerHTML = [
+    {l:'Wake up', v:'5:00 AM'},
+    {l:'Sleep',   v:'11:00 PM'},
+    {l:'Active',  v:TASKS.filter(t=>t.cat!=='rest').length+' tasks'},
+    {l:'Done',    v:dc},
   ].map(s=>`<div class="sc"><div class="sc-l">${s.l}</div><div class="sc-v">${s.v}</div></div>`).join('');
 
-  const secs=getSections();
-  let html='';
+  const secs = getSections();
+  let html = '';
   secs.forEach(sec=>{
-    html+=`<div class="section-head">${sec.name}</div>`;
+    html += `<div class="section-head">${sec.name}</div>`;
     TASKS.forEach((t,i)=>{
-      const myS=[...secs].reverse().find(s=>s.start<=i);
-      if(!myS||myS.name!==sec.name)return;
-      const isDone=done[i];
-      html+=`<div class="row${isDone?' done':''}" id="row-${i}" onclick="tog(${i})">
-        <div class="row-cb"><div class="row-cb-inner"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg></div></div>
-        <div class="row-dot" style="background:${t.dot}"></div>
-        <div class="row-main">
-          <div class="row-title">${t.title}</div>
-          <div class="row-time">${t.time} – ${t.end}</div>
+      const myS = [...secs].reverse().find(s=>s.start<=i);
+      if(!myS||myS.name!==sec.name) return;
+      const isDone = done[i], isOpen = openRows[i];
+      html += `<div class="row${isDone?' done':''}${isOpen?' open':''}" id="r${i}">
+        <div class="row-top" onclick="toggleOpen(${i})">
+          <div class="row-cb" onclick="event.stopPropagation();tog(${i})">
+            <div class="row-cb-inner"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+          </div>
+          <div class="row-dot" style="background:${t.dot}"></div>
+          <div class="row-main">
+            <div class="row-title">${t.title}</div>
+            <div class="row-time">${t.time} – ${t.end}</div>
+          </div>
+          <div class="row-right">
+            <span class="row-tag" style="background:${t.bg};color:${t.tc};border-color:${t.dot}55">${t.cat}</span>
+            <span class="row-arrow">▾</span>
+          </div>
         </div>
-        <div class="row-end">
-          <span class="row-tag" style="background:${t.bg};color:${t.tc};border:1px solid ${t.dot}55">${t.cat}</span>
-        </div>
+        <div class="row-desc">${t.desc}</div>
       </div>`;
     });
   });
-  document.getElementById('taskList').innerHTML=html;
-  
-  highlightActiveTask();
-}
-
-function highlightActiveTask() {
-  const isToday = (currentDateStr === getLocalISODate());
-  const now = new Date();
-  const currentMins = now.getHours() * 60 + now.getMinutes();
-
-  TASKS.forEach((t, i) => {
-    const rowEl = document.getElementById('row-'+i);
-    if (!rowEl) return;
-    rowEl.classList.remove('active');
-
-    if (isToday) {
-      const [startH, startM] = t.time.split(':').map(Number);
-      const [endH, endM] = t.end.split(':').map(Number);
-      let startMinsTotal = startH * 60 + startM;
-      let endMinsTotal = endH * 60 + endM;
-      if (endMinsTotal < startMinsTotal) endMinsTotal += 24 * 60; // spans midnight
-
-      if (currentMins >= startMinsTotal && currentMins < endMinsTotal) {
-        rowEl.classList.add('active');
-      }
-    }
-  });
+  document.getElementById('taskList').innerHTML = html;
+  renderInsights();
 }
 
 function tog(i){
-  let done = history[currentDateStr] || {};
   done[i]=!done[i];
-  history[currentDateStr] = done;
-  localStorage.setItem('cal_history_v1', JSON.stringify(history));
+  localStorage.setItem(STORE,JSON.stringify(done));
   render();
 }
 
+function toggleOpen(i){
+  openRows[i]=!openRows[i];
+  render();
+}
+
+function toggleInsights(){
+  insightsOn=!insightsOn;
+  document.getElementById('insightsPanel').classList.toggle('show',insightsOn);
+  renderInsights();
+}
+
+function renderInsights(){
+  const dc = Object.values(done).filter(Boolean).length;
+  const pct = Math.round((dc/TASKS.length)*100);
+  const activeDone = TASKS.filter((t,i)=>t.cat!=='rest'&&done[i]).length;
+
+  document.getElementById('insGrid').innerHTML = [
+    {val:dc,          lbl:'Tasks done'},
+    {val:pct+'%',     lbl:'Completion'},
+    {val:activeDone,  lbl:'Active done'},
+  ].map(c=>`<div class="ins-card"><div class="ins-val">${c.val}</div><div class="ins-lbl">${c.lbl}</div></div>`).join('');
+
+  const catMeta = {
+    career:  {dot:'#2e86de', tc:'#85B7EB'},
+    language:{dot:'#7F77DD', tc:'#AFA9EC'},
+    mind:    {dot:'#EF9F27', tc:'#FAC775'},
+    create:  {dot:'#D85A30', tc:'#F0997B'},
+    spirit:  {dot:'#1D9E75', tc:'#5DCAA5'},
+    ritual:  {dot:'#1D9E75', tc:'#5DCAA5'},
+    rest:    {dot:'#3d5878', tc:'#7a99be'},
+  };
+  const counts={};
+  TASKS.forEach((t,i)=>{
+    if(!counts[t.cat]) counts[t.cat]={total:0,done:0};
+    counts[t.cat].total++;
+    if(done[i]) counts[t.cat].done++;
+  });
+  let barsHtml='';
+  ['career','language','mind','create','spirit'].forEach(cat=>{
+    if(!counts[cat]) return;
+    const c=counts[cat], m=catMeta[cat];
+    const p=Math.round((c.done/c.total)*100);
+    barsHtml+=`<div class="ins-bar-row">
+      <div class="ins-bar-label"><span style="color:${m.tc}">${cat}</span><span style="color:var(--text3)">${c.done}/${c.total}</span></div>
+      <div class="ins-bar"><div class="ins-bar-fill" style="width:${p}%;background:${m.dot}"></div></div>
+    </div>`;
+  });
+  document.getElementById('insBars').innerHTML = barsHtml;
+}
+
 function resetAll(){
-  if(confirm('Reset all checkboxes for ' + currentDateStr + '?')){
-    history[currentDateStr] = {};
-    localStorage.setItem('cal_history_v1', JSON.stringify(history));
+  if(confirm('Reset all checkboxes for a fresh day?')){
+    done={}; openRows={};
+    localStorage.removeItem(STORE);
     render();
   }
 }
 
-// Analytics Logic
-function openAnalytics() {
-  document.getElementById('analyticsModal').classList.add('open');
-  generateAnalytics();
-}
-
-function closeAnalytics() {
-  document.getElementById('analyticsModal').classList.remove('open');
-}
-
-function generateAnalytics() {
-  // Filter out days entirely empty (0 tasks) just in case
-  const dates = Object.keys(history).filter(d => Object.keys(history[d]).length > 0).sort();
-  
-  if (dates.length === 0) {
-    document.getElementById('analyticsBody').innerHTML = '<div style="color:var(--text3);font-size:14px;text-align:center;padding:2rem 0;">No active history found.<br>Check off some tasks to see your insights!</div>';
-    return;
-  }
-  
-  // Calculate sprint progress
-  const firstDate = new Date(dates[0]);
-  const today = new Date(getLocalISODate());
-  const diffTime = Math.abs(today - firstDate);
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-  const sprintDay = Math.min(diffDays, 60);
-
-  let totalTasksEver = 0;
-  let totalTasksDoneEver = 0;
-  let catStats = {};
-
-  TASKS.forEach(t => {
-    if(!catStats[t.cat]) catStats[t.cat] = { done: 0, total: 0, color: t.dot };
-  });
-
-  dates.forEach(d => {
-    const dayData = history[d] || {};
-    TASKS.forEach((t, i) => {
-      // Exclude 'rest' from accuracy math if preferred? Let's include everything for true discipline 
-      totalTasksEver++;
-      catStats[t.cat].total++;
-      if (dayData[i]) {
-        totalTasksDoneEver++;
-        catStats[t.cat].done++;
-      }
-    });
-  });
-
-  const overallPct = Math.round((totalTasksDoneEver / totalTasksEver) * 100) || 0;
-
-  let html = `
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom: 24px;">
-      <div class="stat-card">
-        <div class="stat-card-title">Sprint Day</div>
-        <div class="stat-val">${sprintDay}<span style="font-size:14px;color:var(--text3);font-weight:600;"> / 60</span></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-card-title">Overall Accuracy</div>
-        <div class="stat-val">${overallPct}%</div>
-      </div>
-    </div>
-    <div class="stat-card-title" style="margin-left:4px;">Consistency by Category</div>
-  `;
-
-  // Sort categories by performance
-  const cats = Object.keys(catStats).filter(c => catStats[c].total > 0).sort((a,b) => {
-    return (catStats[b].done/catStats[b].total) - (catStats[a].done/catStats[a].total);
-  });
-
-  cats.forEach(c => {
-    const s = catStats[c];
-    const pct = Math.round((s.done / s.total) * 100);
-    html += `
-      <div class="cat-row">
-        <span style="text-transform:capitalize;">${c}</span>
-        <span>${pct}%</span>
-      </div>
-      <div class="cat-bar-wrap">
-        <div class="cat-bar-fill" style="width:${pct}%; background:${s.color}"></div>
-      </div>
-    `;
-  });
-
-  document.getElementById('analyticsBody').innerHTML = html;
-}
-
-// Boot up
-initDate();
+render();
 </script>
 </body>
 </html>
